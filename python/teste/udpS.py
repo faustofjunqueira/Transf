@@ -12,14 +12,14 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
     when sending data back via sendto().
     """    
     def handle(self):        
-
-        data = self.request[0].strip()
-
+        
+        data = self.request[0]
+        print(data.decode())
         if  data != bytes("save","utf-8"):
             f.write(data)
         else:
-            print("Arquivo fechado")            
-            f.close
+            print("Arquivo fechado")
+            f.close()            
 
         socket = self.request[1]
         socket.sendto(bytes("OK","utf-8"), self.client_address)
@@ -28,4 +28,4 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 if __name__ == "__main__":
     HOST, PORT = "localhost", 9090
     server = socketserver.UDPServer((HOST, PORT), MyUDPHandler)
-    server.serve_forever()    
+    server.serve_forever()
