@@ -4,7 +4,6 @@ from globalsVar import *
 from sys import *
 from classes import *
 from socket import *
-import base64
 
 if __name__ == "__main__":
 
@@ -27,8 +26,11 @@ if __name__ == "__main__":
 		ListIp = CarregaArquivo(G.IP_LIST_FILENAME)
 		Localhost = ListIp.pop(0)
 		ListTemp =  ListIp[:]
+		# lenFile = open(G.FILENAME,"rb").seek(0,2)
+		# G.PACKSIZE = int(lenFile*0.001/ListTemp[-1].id)+1 # 38% do tamanho total
 		while len(ListIp) is not 0:
 			SendList(socketFd,ListIp)
+			# Request.send(socketFd,(ListIp[0].ip,ListIp[0].port),(G.PACKSIZE,Request.Request.PACKSIZE))
 			ListIp.pop(0)
 		return (ListTemp,Localhost)
 
@@ -64,14 +66,14 @@ if __name__ == "__main__":
 		end = init + G.PACKSIZE
 
 		for i in range(npack):
-			print("from:{} to:{} slice:({},{}) npack:{} diffpack:{} Myblock:{} PACKSIZE:{}".format(G.Localhost.id,cur_target.id,init,end,npack,diffPack,Myblock,G.PACKSIZE))
+			# print("from:{} to:{} slice:({},{}) npack:{} diffpack:{} Myblock:{} PACKSIZE:{}".format(G.Localhost.id,cur_target.id,init,end,npack,diffPack,Myblock,G.PACKSIZE))
 			data = (G.Localhost.id,f[init:end])
 			Request.send(socketFd,(cur_target.ip,cur_target.port),(data,Request.Request.FILE))
 			init += G.PACKSIZE
 			end += G.PACKSIZE
 
 		end -= G.PACKSIZE
-		print("from:{} to:{} slice:({},{}) npack:{} diffpack:{} Myblock:{} PACKSIZE:{}".format(G.Localhost.id,cur_target.id,end,end+diffPack,npack,diffPack,Myblock,G.PACKSIZE))
+		# print("from:{} to:{} slice:({},{}) npack:{} diffpack:{} Myblock:{} PACKSIZE:{}".format(G.Localhost.id,cur_target.id,end,end+diffPack,npack,diffPack,Myblock,G.PACKSIZE))
 		data = (G.Localhost.id,f[end:end+diffPack])
 		# data = (G.Localhost.id,f.read(diffPack))
 		Request.send(socketFd,(cur_target.ip,cur_target.port),(data,Request.Request.FILE))
@@ -83,8 +85,7 @@ if __name__ == "__main__":
 		with open(filename,"rb") as f:
 			lenFile = f.seek(0,2)
 			while len(ListIp) is not 0:
-				G.PACKSIZE = int(lenFile*0.005/ListIp[0].id)+1 # 38% do tamanho total
-				Request.send(socketFd,(ListIp[0].ip,ListIp[0].port),(G.PACKSIZE,Request.Request.PACKSIZE)) 
+				# Request.send(socketFd,(ListIp[0].ip,ListIp[0].port),(G.PACKSIZE,Request.Request.PACKSIZE)) 
 				f.seek(0)
 				SendFile(socketFd,f.read(),ListIp[:],lenFile)
 				ListIp.pop(0)

@@ -32,8 +32,8 @@ if __name__ != "__main__":
 				Thread.stop()
 
 			elif self.Type is Request.PACKSIZE:
-				Thread.packsize = 2*(int(self.data))
-				print("PACKSIZE ajustado para: {}".format(G.PACKSIZE))
+				G.RECPACKSIZE = 2*(int(self.data))
+				print("PACKSIZE ajustado para: {}".format(G.RECPACKSIZE))
 
 			elif self.Type is Request.LIST:
 				print("Solve List Begin")
@@ -43,6 +43,7 @@ if __name__ != "__main__":
 
 	def send(socketFd,To,request):
 		data = pickle.dumps(request)
+		# print("Tamanho dado enviado: ",len(data), "para: ", To)
 		socketFd.sendto(data,To)
 		data = socketFd.recvfrom(128)
 		if data[0] != b"ok":

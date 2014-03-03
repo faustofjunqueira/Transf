@@ -3,6 +3,7 @@ if __name__ != "__main__":
 	from socket import *
 	from threading import Thread
 	import pickle
+	from globalsVar import *
 
 	import classes.Request as Request
 	
@@ -21,12 +22,17 @@ if __name__ != "__main__":
 
 		def run(self):
 			while not self.endRun:
-				data,addr = self.socketFd.recvfrom(self.packsize)
-				self.data = pickle.loads(data)
+				data,addr = self.socketFd.recvfrom(G.RECPACKSIZE)
+				try:
+					self.data = pickle.loads(data)
+				except EOFError:
+					print(len(data))
+					raise EOFError
 				self.request = Request.Request()
 				self.request.setRequest(self.data)
 				self.request.solve(self)
 				self.socketFd.sendto(b"ok",addr)
+				
 			print("Acabei!")
 
 else:
