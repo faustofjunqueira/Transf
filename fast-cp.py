@@ -1,14 +1,10 @@
 #!/usr/bin/python3
 
-IP_LIST_FILENAME = "target.list"
-MYPORT = 9090
-MYID = 0
-FILENAME = "junda"
-PACKSIZE = 1024
-
+from globalsVar import *
 from sys import *
 from classes import *
 from socket import *
+import base64
 
 if __name__ == "__main__":
 
@@ -24,97 +20,103 @@ if __name__ == "__main__":
 		return ListIp
 
 	def SendList(socketFd, ListIp):
-		request = Request.Request()
-		request.setRequest((ListIp,Request.Request.LIST))
-		Request.send(socketFd,(ListIp[0].ip,ListIp[0].port),request)
+		Request.send(socketFd,(ListIp[0].ip,ListIp[0].port),(ListIp,Request.Request.LIST))
+
 
 	def StartStep(socketFd):
-		ListIp = CarregaArquivo(IP_LIST_FILENAME)
+		ListIp = CarregaArquivo(G.IP_LIST_FILENAME)
 		Localhost = ListIp.pop(0)
-		ListTemp = ListIp
+		ListTemp =  ListIp[:]
 		while len(ListIp) is not 0:
 			SendList(socketFd,ListIp)
 			ListIp.pop(0)
-
-		return (Localhost,ListTemp)
+		return (ListTemp,Localhost)
 
 	def CatFile(filename,ate):
-		global FILENAME
 		with open(filename,"wb") as w:
 			for i in range(1,ate+1):
-				with open("tmp/"+FILENAME+str(i),"rb") as r:
+				with open("tmpFile/"+G.FILENAME+str(i),"rb") as r:
 					w.write(r.read())
 
 	def RecvStep(Localhost, socketFd):
-		RecvThreadList = [RecvThread.RecvThread(PACKSIZE,socketFd) for i in range(0,Localhost.id)]
+		RecvThreadList = [RecvThread.RecvThread(G.PACKSIZE,socketFd) for i in range(0,Localhost.id-1)]
 		for i in RecvThreadList:
 			i.start()
 		for i in RecvThreadList:
 			i.join()
-		CatFile(FILENAME,Localhost.id-1)
+		print("Vamos concatenar!")
+		CatFile(G.FILENAME,Localhost.id-1)
 		#FAzer checksum
 
 	def SendFile(socketFd,f,ListIp, lenFile):
-		global PACKSIZE
-		global Localhost
 		cur_target = ListIp.pop(0)
-		Myblock = int(lenFile/(cur_target.id-1))
-		init = (cur_target.id-1)*Myblock
+		Myblock = int(lenFile/(cur_target.id-1)) # Meu bloco
+		init = (G.Localhost.id-1)*Myblock
 		
-		if cur_target.id-1 is Localhost.id:
-			Myblock += int(lenFile/cur_target.id-1)
+		if cur_target.id-1 is G.Localhost.id:
+			Myblock += int(lenFile%(cur_target.id-1))
 
-		f.seek(init)
+		# f.seek(init)
 
-		npack = int(Myblock/PACKSIZE)
-		diffPack = int(Myblock % PACKSIZE)
-		
-		request = Request.Request()
-		
-		for i in range(npack):			
-			data = (Localhost.id,f.read(PACKSIZE))
-			request.setRequest((data,Request.Request.FILE))
-			Request.send(socketFd,(cur_target.ip,cur_target.port),request)
+		npack = int(Myblock/G.PACKSIZE)
+		diffPack = int(Myblock % G.PACKSIZE)
 
-		data = (Localhost.id,f.read(diffPack))
-		request.setRequest((data,Request.Request.FILE))
-		Request.send(socketFd,(cur_target.ip,cur_target.port),request)
+		end = init + G.PACKSIZE
+
+		for i in range(npack):
+			print("from:{} to:{} slice:({},{}) npack:{} diffpack:{} Myblock:{} PACKSIZE:{}".format(G.Localhost.id,cur_target.id,init,end,npack,diffPack,Myblock,G.PACKSIZE))
+			data = (G.Localhost.id,f[init:end])
+			Request.send(socketFd,(cur_target.ip,cur_target.port),(data,Request.Request.FILE))
+			init += G.PACKSIZE
+			end += G.PACKSIZE
+
+		end -= G.PACKSIZE
+		print("from:{} to:{} slice:({},{}) npack:{} diffpack:{} Myblock:{} PACKSIZE:{}".format(G.Localhost.id,cur_target.id,end,end+diffPack,npack,diffPack,Myblock,G.PACKSIZE))
+		data = (G.Localhost.id,f[end:end+diffPack])
+		# data = (G.Localhost.id,f.read(diffPack))
+		Request.send(socketFd,(cur_target.ip,cur_target.port),(data,Request.Request.FILE))
+
+		Request.send(socketFd,(cur_target.ip,cur_target.port),(None,Request.Request.END_FILE))
 
 
 	def SendStep(socketFd,ListIp,filename):
 		with open(filename,"rb") as f:
 			lenFile = f.seek(0,2)
 			while len(ListIp) is not 0:
+				G.PACKSIZE = int(lenFile*0.005/ListIp[0].id)+1 # 38% do tamanho total
+				Request.send(socketFd,(ListIp[0].ip,ListIp[0].port),(G.PACKSIZE,Request.Request.PACKSIZE)) 
 				f.seek(0)
-				SendFile(socketFd,f,ListIp,lenFile)
+				SendFile(socketFd,f.read(),ListIp[:],lenFile)
 				ListIp.pop(0)
-		request = Request.Request()
-		request.setRequest((None,Request.Request.END_FILE))
-		Request.send(socketFd,(cur_target.ip,cur_target.port),request)
 
-	Localhost = None
-	ListIp = []
+	
 	socketFd = socket(AF_INET, SOCK_DGRAM)
 
 	if len(argv) >= 3:
 		
-		MYPORT = int(argv[1])
-		FILENAME = argv[2]
-		socketFd.bind(("localhost",MYPORT))
+		G.MYPORT = int(argv[1])
+		G.FILENAME = argv[2]
+		socketFd.bind(("localhost",G.MYPORT))
 
 		if len(argv) > 3 and argv[3] == "--start":
-			print("Start")
-			ListIp,Localhost = StartStep(socketFd)
+			print("Start Step")
+			G.ListIp,G.Localhost = StartStep(socketFd)
+			print("End Start Step")
 		else:
+			print("Receive List Step")
 			RecvThreadList = list()
-			RecvThreadList.append(RecvThread.RecvThread(PACKSIZE,socketFd))
+			RecvThreadList.append(RecvThread.RecvThread(G.PACKSIZE,socketFd))
 			RecvThreadList[0].start()
 			RecvThreadList[0].join()
-			RecvStep(Localhost,socketFd)
+			print("Start Receive Step")
+			RecvStep(G.Localhost,socketFd)
+			print("End Receive Step")
 		if len(argv) > 4:
 			print("Argumentos desnecessarios: {}".format(argv[4:]))
+		print("Start Send Step")
+		SendStep(socketFd,G.ListIp,G.FILENAME)
+		print("End Send Step")
 
-		SendStep(socketFd,ListIp,FILENAME)
 
 	else:
 		print("Parametros indefinidos")

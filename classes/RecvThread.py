@@ -22,9 +22,12 @@ if __name__ != "__main__":
 		def run(self):
 			while not self.endRun:
 				data,addr = self.socketFd.recvfrom(self.packsize)
-				self.request = pickle.loads(data)
+				self.data = pickle.loads(data)
+				self.request = Request.Request()
+				self.request.setRequest(self.data)
 				self.request.solve(self)
-				self.socketFd.sendto("ok",addr)
+				self.socketFd.sendto(b"ok",addr)
+			print("Acabei!")
 
 else:
 	print("RecvThread.py não pode ser init")

@@ -1,4 +1,5 @@
 if __name__ != "__main__":
+	from globalsVar import *
 	from socket import *
 	import pickle
 	
@@ -7,6 +8,7 @@ if __name__ != "__main__":
 		FILE = 1
 		END_FILE = 2
 		LIST = 3
+		PACKSIZE = 4
 
 		def __init__(self):
 			self.data = None
@@ -20,28 +22,31 @@ if __name__ != "__main__":
 				exit(-1)
 
 		def solve(self,Thread):
-			global FILENAME
 			if self.Type is Request.FILE:
 				iD,dados = self.data
-				with open("tmp/"+FILENAME+str(iD),"ab"):
+				with open("tmpFile/"+G.FILENAME+str(iD),"ab") as f:
 					f.write(dados)
 
 			elif self.Type is Request.END_FILE:
+				print("Devo encerrar!")
 				Thread.stop()
 
+			elif self.Type is Request.PACKSIZE:
+				Thread.packsize = 2*(int(self.data))
+				print("PACKSIZE ajustado para: {}".format(G.PACKSIZE))
+
 			elif self.Type is Request.LIST:
-				global Localhost
-				global ListIp
-				ListIp = [i for i in self.data]
-				Localhost = ListIp.pop(0)
+				print("Solve List Begin")
+				G.ListIp = [i for i in self.data][:]
+				G.Localhost = G.ListIp.pop(0)
 				Thread.stop()				
 
 	def send(socketFd,To,request):
 		data = pickle.dumps(request)
 		socketFd.sendto(data,To)
 		data = socketFd.recvfrom(128)
-		if data[0] != "ok":
-			print("Nao recebeu ok!")
+		if data[0] != b"ok":
+			print("Nao recebeu ok -> {}".format(data[0]))
 			exit(-1)
 
 
