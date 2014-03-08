@@ -1,4 +1,8 @@
+import os
+
 class G:
+	PATH_PROGRAM = "/home/fausto/Documentos/facudade/fast-cp/"
+	PATH_CALL_PROGRAM = os.getcwd()+"/"
 	IP_LIST_FILENAME = "target.list"
 	MYPORT = 9090
 	MYID = 0
