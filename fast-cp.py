@@ -9,18 +9,18 @@ from sys import *
 from classes import *
 from socket import *
 from utils import *
+from config import *
 
 if __name__ != "__main__":
 	exit()
 
 StartFlag = ReadParam()
 
-
 socketFd = socket(AF_INET, SOCK_DGRAM)
 try:
 	socketFd.bind(("localhost",G.MYPORT))
 except PermissionError:
-	print("Voce nao tem permissao para usar essa porta. Tente outra")
+	print("Voce nao tem permissao para usar essa porta. Deve ter algum software rodando nessa porta. Tente outra")
 	exit()
 
 if StartFlag:
@@ -31,7 +31,7 @@ if StartFlag:
 	except FileExistsError:
 		print("Diretorio temporario existente, será excluido!")
 		removeFile(G.PATH_PROGRAM+str(G.Localhost.id)+"tmpFile")
-		os.mkdir(G.PATH_PROGRAM+str(G.Localhost.id)+"tmpFile")	
+		os.mkdir(G.PATH_PROGRAM+str(G.Localhost.id)+"tmpFile")
 	print("End Start Step")
 else:
 	print("Receive List Step")

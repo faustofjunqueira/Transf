@@ -6,11 +6,8 @@ class G:
 #	PATH_PROGRAM="/home/fausto/Documentos/facudade/fast-cp/"
 	PATH_PROGRAM="/home/fausto/Documentos/facudade/fast-cp/"
 	PATH_CALL_PROGRAM=os.getcwd()+"/"
-#	IP_LIST_FILENAME="target.list"
-	TARGET_DEFAULT="junda1"
-	TARGET_PATH=PATH_PROGRAM+"target-list/"
-	TARGETLIST=None
-	MYPORT=9091
+	IP_LIST_FILENAME="target.list"
+	MYPORT=9090
 	MYID=0
 	FILENAME="junda"
 	PACKSIZE=55267

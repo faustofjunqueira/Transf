@@ -1,8 +1,13 @@
+
+# TODO: 
+#	Parametros -t: Verificar se o arquivo existe
+
 import os
 from globalsVar import *
 from sys import *
 from classes import *
 from socket import *
+from config import *
 
 if __name__ == "__main__":
 	print("Esse arquivo não pode ser chamado na main")
@@ -13,16 +18,22 @@ def creditos():
 	print("\n\tEstudantes de Graduação UFRJ - Deparatamento de Ciências da Computação - Brasil")
 	print("\n\tDesenvolvedores:\n\t\tFausto F Junqueira\n\t\tJúlio Cesar S Pereira")
 	print("\tIdealizadores:\n\t\tBernardo Lins\n\t\tFausto Junqueira\n\t\tGuilherme Oki\n\t\tLeon Algusto\n\t\tJúlio Cesar Pereira")
+	print("\n")
 
 def PrintMan(msg = ""):
-	print("\n")
-	print(msg)
+	if len(msg) > 0:
+		print("\n")
+		print(msg)
 	print("\n")
 	print("Faça:")
 	print("\tfast-cp [opcao] [nome_arquivo]")
 	print("Opções:")
-	print("\t --start : inicia o ciclo de envios. Quando o programa não iniciado com esse parametro, ele já fica em modo de recepção dos pacotes, até que seja recepcionado por um arquivo")
-	print("\t -p [PORTA] : define a porta que será usada para a transmissão. Default "+str(G.MYPORT))
+	print("\t --start : inicia o ciclo de envios. Quando o programa não iniciado com esse parametro, ele já fica em modo de recepção dos pacotes, até que seja recepcionado por um arquivo\n")
+	print("\t -p [PORTA] : define a porta que será usada para a transmissão. Default "+str(G.MYPORT)+"\n")
+	print("\t --config : Esse parametro deve ser chamado quando se instala o software afim de configurar o software. Esse parametro deve ser chamado sozinho!. Se não for configurado! o software nao irá funcionar devidamente!\n")
+	print("\t --show-config : Mostra as configurações do software. Esse parametro deve ser chamado sozinho!\n")
+	print("\t --target-create: Ferramenta de criação de lista de targets\n")
+	print("\t -t : Escolhe uma lista de targets\n")
 	print("\n")
 	creditos()
 	exit()
@@ -46,6 +57,42 @@ def ReadParam():
 			if STARTFLAG:
 				PrintMan("--start já foi invocado. O que você gostaria de fazer?")
 			STARTFLAG = True
+		elif argv[i] == "--config":
+			if i is 1 and len(argv) is 2:
+				configProg()
+			else:
+				PrintMan("O paramentro --config so pode ser chamado sozinho! Tu num vai querer configurar e usar ao mesmo tempo neah!")
+		elif argv[i] == "--show-config":
+			if i is 1 and len(argv) is 2:
+				showConfig()
+			else:
+				PrintMan("O paramentro --show-config so pode ser chamado sozinho! Tu num vai querer ver a configuração e usar ao mesmo tempo neah!")
+		elif argv[i] == "--help" or argv[i] == "-h":
+			if i is 1 and len(argv) is 2:
+				PrintMan()
+			else:
+				PrintMan("O paramentro --help(-h) so pode ser chamado sozinho! Tu num vai querer ver a ajuda e usar ao mesmo tempo neah!")
+		elif argv[i] == "--target-create":
+			if i is 1:
+				TargetList.targetListProg(G.TARGET_PATH)
+			else:
+				PrintMan("O paramentro --target-create deve ser o segundo parametro a ser chamado, pois ele inicia o modo de criação de lista de targets")
+
+		elif argv[i] == "--target-show":
+			if i is 1:
+				l = os.listdir(G.TARGET_PATH)
+				print("Lista de targets:")
+				for a in l:
+					print("\t"+a)
+				exit()
+			else:
+				PrintMan("O paramentro --target-show deve ser invocado sozinho")
+		elif argv[i] == "-t":
+			if os.access(G.TARGET_PATH+argv[i+1],os.F_OK):
+				i += 1
+				G.TARGETLIST = argv[i]
+			else:
+				print("Target List inexistente")
 		else:
 			if argv[i][0] is '-':
 				PrintMan("Nome invalido para arquivo! Suponho que voce não queria copiar esse arquivo! Isso eh um arquivo?!")
@@ -83,7 +130,7 @@ def SendList(socketFd, ListIp):
 	Request.send(socketFd,(ListIp[0].ip,ListIp[0].port),(ListIp,Request.Request.LIST))
 
 def StartStep(socketFd):
-	ListIp = CarregaArquivo(G.IP_LIST_FILENAME)
+	ListIp = CarregaArquivo(G.TARGETLIST)
 	Localhost = ListIp.pop(0)
 	ListTemp =  ListIp[:]
 	# lenFile = open(G.FILENAME,"rb").seek(0,2)
