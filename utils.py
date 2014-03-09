@@ -65,7 +65,7 @@ def ReadParam():
 def removeFile(path):
 	files = os.listdir(path)
 	for f in files:
-		os.remove(path+files)
+		os.remove(path+"/"+f)
 	os.removedirs(path)
 
 def CarregaArquivo(filename):
@@ -95,9 +95,9 @@ def StartStep(socketFd):
 	return (ListTemp,Localhost)
 
 def CatFile(FILENAME,ate):		
-	with open(G.PATH_CALL_PROGRAM+filename,"wb") as w:
+	with open(G.PATH_CALL_PROGRAM+FILENAME,"wb") as w:
 		for i in range(1,ate+1):				
-			with open(G.PATH_PROGRAM+str(G.Localhost.id)+"tmpFile/"+G.FILENAME+str(i),"rb") as r:
+			with open(G.PATH_PROGRAM+str(G.Localhost.id)+"tmpFile/"+FILENAME+str(i),"rb") as r:
 				w.write(r.read())
 
 def RecvStep(Localhost, socketFd):
