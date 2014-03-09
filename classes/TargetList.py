@@ -11,13 +11,11 @@ if __name__ == "__main__":
 class TargetList:
 
 	def __init__(self,TARGET_PATH):
-		target = Target
-		target.id = 1
-		target.ip = "127.0.1.1"		
-		target.port = G.MYPORT
+		
 		self.TARGET_PATH = TARGET_PATH
-		self.list = [target]
-		self.filename = "TargetList"+time.ctime()		
+		self.list = []
+		self.filename = "TargetList"+time.ctime()
+		self.add((1,"127.0.1.1",G.MYPORT))
 
 	def create(self,filename = ""):
 		if len(filename) > 0:
@@ -32,11 +30,13 @@ class TargetList:
 		with open(self.TARGET_PATH+self.filename,"w") as w:
 			i = 1
 			for t in self.list:
-				w.write(str(i)+" "+t.ip+" "+str(t.port)+"\n")
+				w.write(str(t[0])+" "+t[1]+" "+str(t[2])+"\n")
 				i += 1
 
 	def add(self,t):
 		self.list.append(t)
+		for i in self.list:
+			print(i)
 
 	def load(filename):
 		if os.access(filename,os.F_OK):
@@ -58,22 +58,23 @@ def targetListProg(TARGET_PATH):
 	if len(TList.filename) is 0:		
 		print("Nome invalido! Foi gerado um nome ramdomico para sua lista => "+TList.filename)
 
-	target = Target
 	i = 2
 	stop = False
 	print("Voce sempre eh o ID 1 da sua lista de targets, então comecemos pelo 2")
-	
-	while not stop:
+	id = port =0
+	ip = ""
+
+	while not stop:		
 		print("Insira o target numero "+str(i))
-		target.id = i
-		target.ip = input("\tIP: ")
+		id = i
+		ip = input("\tIP: ")
 		try:
-			target.port = int(input("\tPorta: "))
+			port = int(input("\tPorta: "))
 		except ValueError:
 			print("Porta Invalida")
 			continue
 
-		TList.add(target)
+		TList.add((id,ip,port))
 
 		while True:
 			r = input("Deseja inserir mais um target?(S/n) ")

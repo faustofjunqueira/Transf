@@ -48,9 +48,8 @@ def configProg():
 						w.write(splited[0]+'='+port+'\n')					
 				elif splited[0] == "\tTARGET_PATH":
 					path = ""
-					if splited[1] != "None\n":
-						print("Path configurado => "+splited[1])
-					path = input("Insira o caminho para o programa(coloque a / no final do path por gentileza): ")
+					print("Path configurado => "+splited[1])
+					path = input("Insira o caminho para a lista de targets(coloque a / no final do path por gentileza): ")
 					if path == "exit":
 						os.remove(pathProgram+nameTempFile)
 						exit()
@@ -58,8 +57,20 @@ def configProg():
 						w.write(line)
 					else:
 						w.write(splited[0]+'="'+path+'"\n')
+				elif splited[0] == "\tTARGET_DEFAULT":
+					target = ""
+					if splited[1] != "None\n":
+						print("Target configurado => "+splited[1])
+					target = input("Insira o target default:")
+					if target == "exit":
+						os.remove(pathProgram+nameTempFile)
+						exit()
+					elif target == "":
+						w.write(line)
+					else:
+						w.write(splited[0]+'="'+target+'"\n')
 				else:
-					w.write(line)
+					w.write(line)				
 
 	os.remove(pathProgram+"globalsVar.py")
 	os.rename(pathProgram+nameTempFile,pathProgram+"globalsVar.py")
@@ -75,6 +86,7 @@ def showConfig():
 		packsize = ""
 		recpacksize = ""
 		target_path = ""
+		target_default = ""
 		for line in r.readlines():
 			splited = line.split("=")
 			if splited[0] == "\tPATH_PROGRAM":
@@ -87,9 +99,12 @@ def showConfig():
 				recpacksize = splited[1]
 			elif splited[0] == "\tTARGET_PATH":
 				target_path = splited[1]
+			elif splited[0] == "\tTARGET_DEFAULT":
+				target_default = splited[1] 
 		print("\nConfiguração do fast-cp:\n\tCaminho do fast-cp: "+path+
 			  "\tPorta(default): "+port+
 			  "\tTamanho do pacote: "+packsize+
 			  "\tTamanho do pacote de recepção: "+recpacksize+
-			  "\tCaminho das listas de targets: "+target_path)
+			  "\tCaminho das listas de targets: "+target_path+
+			  "\tTarget list default: "+target_default)
 	exit() 

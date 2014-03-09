@@ -88,7 +88,7 @@ def ReadParam():
 			else:
 				PrintMan("O paramentro --target-show deve ser invocado sozinho")
 		elif argv[i] == "-t":
-			if os.access(G.TARGET_PATH+argv[i+1],os.F_OK):
+			if os.access(G.PATH_PROGRAM+G.TARGET_PATH+argv[i+1],os.F_OK):
 				i += 1
 				G.TARGETLIST = argv[i]
 			else:
@@ -117,7 +117,7 @@ def removeFile(path):
 
 def CarregaArquivo(filename):
 	ListIp = list()	
-	listTemp = [i.strip("\n").split(" ") for i in open(G.PATH_PROGRAM+filename,"r").readlines()]
+	listTemp = [i.strip("\n").split(" ") for i in open(G.PATH_PROGRAM+G.TARGET_PATH+filename,"r").readlines()]
 	for l in listTemp:
 		target = Target.Target()
 		target.id = int(l[0])
