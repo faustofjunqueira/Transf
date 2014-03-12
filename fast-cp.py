@@ -18,7 +18,7 @@ StartFlag = ReadParam()
 
 socketFd = socket(AF_INET, SOCK_DGRAM)
 try:
-	socketFd.bind(("localhost",G.MYPORT))
+	socketFd.bind(("",G.MYPORT))
 except PermissionError:
 	print("Voce nao tem permissao para usar essa porta. Deve ter algum software rodando nessa porta. Tente outra")
 	exit()

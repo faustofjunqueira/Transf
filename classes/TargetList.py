@@ -15,7 +15,7 @@ class TargetList:
 		self.TARGET_PATH = TARGET_PATH
 		self.list = []
 		self.filename = "TargetList"+time.ctime()
-		self.add((1,"127.0.1.1",G.MYPORT))
+		self.add((1,"127.0.0.1",G.MYPORT))
 
 	def create(self,filename = ""):
 		if len(filename) > 0:

@@ -82,7 +82,7 @@ def ReadParam():
 
 		elif argv[i] == "--target-show":
 			if i is 1:
-				l = os.listdir(G.TARGET_PATH)
+				l = os.listdir(G.PATH_PROGRAM+G.TARGET_PATH)
 				print("Lista de targets:")
 				for a in l:
 					print("\t"+a)
@@ -142,7 +142,9 @@ def SendList(socketFd, ListIp):
 	Request.send(socketFd,(ListIp[0].ip,ListIp[0].port),(ListIp,Request.Request.LIST))
 
 def StartStep(socketFd):
+	print(G.PATH_PROGRAM +G.TARGET_PATH+G.TARGETLIST)
 	ListIp = CarregaArquivo(G.TARGETLIST)
+	print(ListIp)
 	Localhost = ListIp.pop(0)
 	ListTemp =  ListIp[:]
 	# lenFile = open(G.FILENAME,"rb").seek(0,2)
