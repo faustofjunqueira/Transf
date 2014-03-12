@@ -30,10 +30,12 @@ def PrintMan(msg = ""):
 	print("Opções:")
 	print("\t --start : inicia o ciclo de envios. Quando o programa não iniciado com esse parametro, ele já fica em modo de recepção dos pacotes, até que seja recepcionado por um arquivo\n")
 	print("\t -p [PORTA] : define a porta que será usada para a transmissão. Default "+str(G.MYPORT)+"\n")
+	print("\t -t : Escolhe uma lista de targets\n")
 	print("\t --config : Esse parametro deve ser chamado quando se instala o software afim de configurar o software. Esse parametro deve ser chamado sozinho!. Se não for configurado! o software nao irá funcionar devidamente!\n")
 	print("\t --show-config : Mostra as configurações do software. Esse parametro deve ser chamado sozinho!\n")
 	print("\t --target-create: Ferramenta de criação de lista de targets\n")
-	print("\t -t : Escolhe uma lista de targets\n")
+	print("\t --target-list-add [LISTA] [IP] [PORTA] : Adiciona um target em uma determinada lista\n")
+	print("\t --target-list-show [LISTA] : Mostra os targets de uma determinada lista\n")
 	print("\n")
 	creditos()
 	exit()
@@ -93,6 +95,16 @@ def ReadParam():
 				G.TARGETLIST = argv[i]
 			else:
 				print("Target List inexistente")
+		elif argv[i] == "--target-list-add":
+			if os.access(G.PATH_PROGRAM+G.TARGET_PATH+argv[i+1],os.F_OK):
+				TargetList.TargetListAdd(G.PATH_PROGRAM+G.TARGET_PATH)
+			else:
+				PrintMan("Target List inexistente")
+		elif argv[i] == "--target-list-show":
+			if os.access(G.PATH_PROGRAM+G.TARGET_PATH+argv[i+1],os.F_OK):
+				TargetList.TargetListShow(G.PATH_PROGRAM+G.TARGET_PATH)
+			else:
+				PrintMan("Target List inexistente")
 		else:
 			if argv[i][0] is '-':
 				PrintMan("Nome invalido para arquivo! Suponho que voce não queria copiar esse arquivo! Isso eh um arquivo?!")

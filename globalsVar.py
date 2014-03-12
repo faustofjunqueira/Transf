@@ -5,7 +5,7 @@ import os
 class G:
 #	PATH_PROGRAM="/home/fausto/Documentos/facudade/fast-cp/"
 #Quando gerar o install colocar para None Path_Program e target_default e apagar os comentarios
-	PATH_PROGRAM="/home/fausto/Documentos/facudade/fast-cp/"
+	PATH_PROGRAM="/home/fausto/fast-cp/"
 	TARGET_DEFAULT="target.list"
 	PATH_CALL_PROGRAM=os.getcwd()+"/"	
 	TARGET_PATH="target-list/"

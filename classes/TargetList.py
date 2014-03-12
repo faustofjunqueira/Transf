@@ -28,24 +28,40 @@ class TargetList:
 
 	def save(self):
 		with open(self.TARGET_PATH+self.filename,"w") as w:
+			print("Salvando o arquivo...")
 			i = 1
 			for t in self.list:
+				print("Gravando"+str(t))
 				w.write(str(t[0])+" "+t[1]+" "+str(t[2])+"\n")
 				i += 1
 
 	def add(self,t):
 		self.list.append(t)
-		for i in self.list:
-			print(i)
 
-	def load(filename):
-		if os.access(filename,os.F_OK):
-			os.rename(filename,self.TARGET_PATH+filename)
+	def show(self):
+		print("\tID\tIP        \tPORTA")
+		for t in self.list:
+			print("\t"+str(t[0])+ "\t"+t[1] + "\t"+str(t[2]))
+
+	def load(TARGET_PATH,filename):
+		if os.access(TARGET_PATH+filename,os.F_OK):
+			with open(TARGET_PATH+filename,"r") as f:
+				TList = TargetList(TARGET_PATH)				
+				for line in f.readlines()[1:]:
+					target = line.split(" ")
+					target[0] = int(target[0])
+					target[2] = int(target[2])
+					target = tuple(target)
+					TList.add(target)
+				TList.filename = filename
+			return TList
 		else:
-			print("Nao foi encontrado o arquivo")
+			print("Lista não existente")
 			exit()
 
-	def remove(filename):
+
+
+	def remove(filename,id):
 		if os.access(self.TARGET_PATH+filename,os.F_OK):
 			os.remove(self.TARGET_PATH+filename)
 		else:
@@ -100,4 +116,33 @@ def targetListProg(TARGET_PATH):
 		else:
 			print("Opcao errada! ")
 
-	exit()		
+	exit()
+
+def TargetListAdd(TARGET_PATH):
+	nameList = argv[2]
+	try:
+		if not os.access(TARGET_PATH+nameList,os.F_OK):
+			print("Lista inexistente")
+			exit()
+		TList = TargetList.load(TARGET_PATH,nameList)		
+		target = (TList.list[-1][0]+1,argv[3],int(argv[4]))
+		TList.add(target)
+		TList.save()
+		print("Target adicionado com sucesso!")
+		exit()
+	except IndexError:
+		print("\nEsta faltando parametro. Olhe o --help\n")
+		exit()
+
+def TargetListShow(TARGET_PATH):
+	nameList = argv[2]
+	try:
+		if not os.access(TARGET_PATH+nameList,os.F_OK):
+			print("Lista inexistente")
+			exit()
+		TList = TargetList.load(TARGET_PATH,nameList)		
+		TList.show()
+		exit()
+	except IndexError:
+		print("\nEsta faltando parametro. Olhe o --help\n")
+		exit()
