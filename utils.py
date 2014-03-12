@@ -17,7 +17,7 @@ def creditos():
 	print("Créditos:")
 	print("\n\tEstudantes de Graduação UFRJ - Deparatamento de Ciências da Computação - Brasil")
 	print("\n\tDesenvolvedores:\n\t\tFausto F Junqueira\n\t\tJúlio Cesar S Pereira")
-	print("\tIdealizadores:\n\t\tBernardo Lins\n\t\tFausto Junqueira\n\t\tGuilherme Oki\n\t\tLeon Algusto\n\t\tJúlio Cesar Pereira")
+	print("\tIdealizadores:\n\t\tBernardo Lins\n\t\tFausto Junqueira\n\t\tGuilherme Oki\n\t\tLeon Augusto\n\t\tJúlio Cesar Pereira")
 	print("\n")
 
 def PrintMan(msg = ""):
