@@ -24,7 +24,7 @@ if __name__ != "__main__":
 		def solve(self,Thread):
 			if self.Type is Request.FILE:
 				iD,dados = self.data
-				with open("tmpFile/"+G.FILENAME+str(iD),"ab") as f:
+				with open(G.PATH_PROGRAM+str(G.Localhost.id)+"tmpFile/"+G.FILENAME+str(iD),"ab") as f:
 					f.write(dados)
 
 			elif self.Type is Request.END_FILE:
