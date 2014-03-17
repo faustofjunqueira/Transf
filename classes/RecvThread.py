@@ -23,15 +23,11 @@ if __name__ != "__main__":
 		def run(self):
 			while not self.endRun:
 				data,addr = self.socketFd.recvfrom(G.RECPACKSIZE)
-				try:
-					self.data = pickle.loads(data)
-				except EOFError:
-					print(len(data))
-					raise EOFError
+				self.socketFd.sendto(b"ok",addr)
+				self.data = pickle.loads(data)
 				self.request = Request.Request()
 				self.request.setRequest(self.data)
 				self.request.solve(self)
-				self.socketFd.sendto(b"ok",addr)
 				
 			print("Acabei!")
 
