@@ -128,6 +128,7 @@ def removeFile(path):
 	os.removedirs(path)
 
 def CarregaArquivo(filename):
+	print("Load List of "+filename)
 	ListIp = list()	
 	listTemp = [i.strip("\n").split(" ") for i in open(G.PATH_PROGRAM+G.TARGET_PATH+filename,"r").readlines()]
 	for l in listTemp:
@@ -139,23 +140,20 @@ def CarregaArquivo(filename):
 	return ListIp
 
 def SendList(socketFd, ListIp):
+	print("Send List To: "+ListIp[0].ip+"/"+str(ListIp[0].port))
 	Request.send(socketFd,(ListIp[0].ip,ListIp[0].port),(ListIp,Request.Request.LIST))
 
 def StartStep(socketFd):
-	print(G.PATH_PROGRAM +G.TARGET_PATH+G.TARGETLIST)
 	ListIp = CarregaArquivo(G.TARGETLIST)
-	print(ListIp)
 	Localhost = ListIp.pop(0)
+	print("Your addr in list: "+str(Localhost))
 	ListTemp =  ListIp[:]
-	# lenFile = open(G.FILENAME,"rb").seek(0,2)
-	# G.PACKSIZE = int(lenFile*0.001/ListTemp[-1].id)+1 # 38% do tamanho total
 	while len(ListIp) is not 0:
 		SendList(socketFd,ListIp)
-		# Request.send(socketFd,(ListIp[0].ip,ListIp[0].port),(G.PACKSIZE,Request.Request.PACKSIZE))
 		ListIp.pop(0)
 	return (ListTemp,Localhost)
 
-def CatFile(FILENAME,ate):		
+def CatFile(FILENAME,ate):
 	with open(G.PATH_CALL_PROGRAM+FILENAME,"wb") as w:
 		for i in range(1,ate+1):				
 			with open(G.PATH_PROGRAM+str(G.Localhost.id)+"tmpFile/"+FILENAME+str(i),"rb") as r:

@@ -24,7 +24,7 @@ except PermissionError:
 	exit()
 
 if StartFlag:
-	print("Start Step")
+	print("Start Step ...")
 	G.ListIp,G.Localhost = StartStep(socketFd)
 	try:
 		os.mkdir(G.PATH_PROGRAM+str(G.Localhost.id)+"tmpFile")
@@ -32,7 +32,7 @@ if StartFlag:
 		print("Diretorio temporario existente, será excluido!")
 		removeFile(G.PATH_PROGRAM+str(G.Localhost.id)+"tmpFile")
 		os.mkdir(G.PATH_PROGRAM+str(G.Localhost.id)+"tmpFile")
-	print("End Start Step")
+	print("End Start Step!")
 else:
 	print("Receive List Step")
 	RecvThreadList = list()

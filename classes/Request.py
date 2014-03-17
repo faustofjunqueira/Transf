@@ -28,7 +28,7 @@ if __name__ != "__main__":
 					f.write(dados)
 
 			elif self.Type is Request.END_FILE:
-				print("Devo encerrar!")
+				print("Arquivo recebido!")
 				Thread.stop()
 
 			elif self.Type is Request.PACKSIZE:
@@ -44,8 +44,11 @@ if __name__ != "__main__":
 	def send(socketFd,To,request):
 		data = pickle.dumps(request)
 		# print("Tamanho dado enviado: ",len(data), "para: ", To)
-		socketFd.sendto(data,To)
-		data = socketFd.recvfrom(128)
+		try:
+			socketFd.sendto(data,To)
+			data = socketFd.recvfrom(128)
+		except timeout:
+			print("Envio para "+str(To)+": timeout")
 		if data[0] != b"ok":
 			print("Nao recebeu ok -> {}".format(data[0]))
 			exit(-1)
