@@ -167,7 +167,7 @@ def RecvStep(Localhost, socketFd):
 		i.start()
 	for i in RecvThreadList:
 		i.join()
-	print("Vamos concatenar!")
+	#print("Vamos concatenar!")
 	CatFile(G.FILENAME,Localhost.id-1)
 	#FAzer checksum
 
@@ -201,7 +201,6 @@ def SendFile(socketFd,f,ListIp, lenFile):
 	Request.send(socketFd,(cur_target.ip,cur_target.port),(data,Request.Request.FILE))
 
 	Request.send(socketFd,(cur_target.ip,cur_target.port),(None,Request.Request.END_FILE))
-
 
 def SendStep(socketFd,ListIp,filename):
 	with open(G.PATH_CALL_PROGRAM+filename,"rb") as f:

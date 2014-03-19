@@ -28,7 +28,7 @@ if __name__ != "__main__":
 					f.write(dados)
 
 			elif self.Type is Request.END_FILE:
-				print("Devo encerrar!")
+				#print("Devo encerrar!")
 				Thread.stop()
 
 			elif self.Type is Request.PACKSIZE:
@@ -42,7 +42,7 @@ if __name__ != "__main__":
 				Thread.stop()				
 
 	def send(socketFd,To,request):
-		data = pickle.dumps(request)
+		data = pickle.dumps(request) #transforma em cadeia de bytes
 		# print("Tamanho dado enviado: ",len(data), "para: ", To)
 		socketFd.sendto(data,To)
 		data = socketFd.recvfrom(128)

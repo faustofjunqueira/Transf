@@ -5,12 +5,11 @@ if __name__ != "__main__":
 	import pickle
 	from globalsVar import *
 	import classes.Request as Request
+	import time
 	
 	class RecvThread(Thread):
 
-		receiveFrom = dict()
-
-		def __init__(self,PACKSIZE,SOCKET):
+		def __init__(self,PACKSIZE,SOCKET): #construtor da classe
 			Thread.__init__(self)
 			self.socketFd = SOCKET
 			
@@ -22,13 +21,16 @@ if __name__ != "__main__":
 			self.endRun = True
 
 		def run(self):
+			
 			while not self.endRun:
 				data,addr = self.socketFd.recvfrom(G.RECPACKSIZE)
 				self.socketFd.sendto(b"ok",addr)
 				self.data = pickle.loads(data)
 				self.request = Request.Request()
 				self.request.setRequest(self.data)
-				self.request.solve(self)				
+				self.request.solve(self)	
+			
+
 
 else:
 	print("RecvThread.py não pode ser init")
