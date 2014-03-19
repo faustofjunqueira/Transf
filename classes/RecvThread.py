@@ -4,10 +4,11 @@ if __name__ != "__main__":
 	from threading import Thread
 	import pickle
 	from globalsVar import *
-
 	import classes.Request as Request
 	
 	class RecvThread(Thread):
+
+		receiveFrom = dict()
 
 		def __init__(self,PACKSIZE,SOCKET):
 			Thread.__init__(self)
@@ -27,9 +28,7 @@ if __name__ != "__main__":
 				self.data = pickle.loads(data)
 				self.request = Request.Request()
 				self.request.setRequest(self.data)
-				self.request.solve(self)
-				
-			print("Acabei!")
+				self.request.solve(self)				
 
 else:
 	print("RecvThread.py não pode ser init")

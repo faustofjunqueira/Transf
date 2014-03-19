@@ -173,6 +173,7 @@ def RecvStep(Localhost, socketFd):
 
 def SendFile(socketFd,f,ListIp, lenFile):
 	cur_target = ListIp.pop(0)
+	print("enviando para " + str(cur_target))
 	Myblock = int(lenFile/(cur_target.id-1)) # Meu bloco
 	init = (G.Localhost.id-1)*Myblock
 	

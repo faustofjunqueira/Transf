@@ -2,7 +2,7 @@ if __name__ != "__main__":
 	from globalsVar import *
 	from socket import *
 	import pickle
-	
+
 	class Request:
 
 		FILE = 1
